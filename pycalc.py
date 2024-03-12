@@ -3,11 +3,13 @@
 ''' Making a calculator to learn how to use python with PyQt '''
 
 import sys
+from functools import partial
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QGridLayout, QLineEdit, QPushButton, QVBoxLayout
-    )
+)
 
+ERROR_MSG = "Error"
 WINDOW_SIZE = 235
 DISPLAY_HEIGHT = 35
 BUTTON_SIZE = 40
@@ -52,12 +54,64 @@ class pyCalcWindow(QMainWindow):
 
         self.generalLayout.addLayout(buttonsLayout)
 
+    def setDisplayText(self, text):
+        """Set the display's text."""
+        self.display.setText(text)
+        self.display.setFocus()
+
+    def displayText(self):
+        """Get the display's text."""
+        return self.display.text()
+
+    def clearDisplay(self):
+        """Clear the display."""
+        self.setDisplayText("")
+
+
+def evaluateExpression(expression):
+    """Evaluate an expression (Model)"""
+    try:
+        result = str(eval(expression, {}, {}))
+    except Exception:
+        result = ERROR_MSG
+    return result
+
+
+class PyCalc:
+    """Controller class"""
+
+    def __init__(self, model, view):
+        self._evaluate = model
+        self._view = view
+        self._connectSignalsAndSlots()
+
+    def _calculateResult(self):
+        result = self._evaluate(expression=self._view.displayText())
+        self._view.setDisplay(result)
+
+    def _buildExpression(self, subExpression):
+        if self._view.displayText() == ERROR_MSG:
+            self._view.clearDisplay()
+        expression = self._view.displayText() + subExpression
+        self._view.setDisplayText(expression)
+
+    def _connectSignalsAndSlots(self):
+        for keySymbol, button in self._view.buttonMap.items():
+            if keySymbol not in {"=", "C"}:
+                button.clicked.connect(
+                    partial(self._buildExpression, keySymbol)
+                )
+        self._view.buttonMap["="].clicked.connect(self._calculateResult)
+        self._view.display.returnPressed.connect(self._calculateResult)
+        self._view.buttonMap["C"].clicked.connect(self._view.clearDisplay)
+
 
 def main():
     """Main Function"""
     calcApp = QApplication([])
     calcWindow = pyCalcWindow()
     calcWindow.show()
+    PyCalc(model=evaluateExpression, view=calcWindow)
     sys.exit(calcApp.exec())
 
 
