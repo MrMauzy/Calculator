@@ -87,7 +87,7 @@ class PyCalc:
 
     def _calculateResult(self):
         result = self._evaluate(expression=self._view.displayText())
-        self._view.setDisplay(result)
+        self._view.setDisplayText(result)
 
     def _buildExpression(self, subExpression):
         if self._view.displayText() == ERROR_MSG:
