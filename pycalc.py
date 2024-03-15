@@ -104,16 +104,6 @@ class PyCalc:
         self._view.display.returnPressed.connect(self._calculateResult)
         self._view.buttonMap["C"].clicked.connect(self._view.clearDisplay)
 
-
-stylesheet = """
-        MainWindow {
-            background-image: url("C:\\Users\\MDiGG\\PycharmProjects\\Calculator\\pi.jpg");
-            background-repeat: no-repeat;
-            background-position: center;
-    }
-"""
-
-
 def main():
     """Main Function"""
     calcApp = QApplication([])
