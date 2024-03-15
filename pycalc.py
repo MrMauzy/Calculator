@@ -5,12 +5,10 @@
 import sys
 from functools import partial
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QWidget, QGridLayout, QLineEdit, QPushButton, QVBoxLayout
-)
+from PyQt6.QtWidgets import *
 
 ERROR_MSG = "Error"
-WINDOW_SIZE = 235
+WINDOW_SIZE = 300
 DISPLAY_HEIGHT = 35
 BUTTON_SIZE = 40
 
@@ -25,6 +23,7 @@ class pyCalcWindow(QMainWindow):
         self.generalLayout = QVBoxLayout()
         centralWidget = QWidget(self)
         centralWidget.setLayout(self.generalLayout)
+        centralWidget.setStyleSheet("color: black; background-color: white")
         self.setCentralWidget(centralWidget)
         self._createDisplay()
         self._createButtons()
@@ -106,10 +105,20 @@ class PyCalc:
         self._view.buttonMap["C"].clicked.connect(self._view.clearDisplay)
 
 
+stylesheet = """
+        MainWindow {
+            background-image: url("C:\\Users\\MDiGG\\PycharmProjects\\Calculator\\pi.jpg");
+            background-repeat: no-repeat;
+            background-position: center;
+    }
+"""
+
+
 def main():
     """Main Function"""
     calcApp = QApplication([])
     calcWindow = pyCalcWindow()
+    calcWindow.setStyleSheet("background-image: url(pi.jpg)")
     calcWindow.show()
     PyCalc(model=evaluateExpression, view=calcWindow)
     sys.exit(calcApp.exec())
